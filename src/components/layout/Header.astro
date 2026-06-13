@@ -56,7 +56,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
   <nav
     id="mobile-nav"
     aria-label="ניווט נייד"
-    class="mobile-nav md:hidden fixed inset-0 top-[57px] bg-white/95 backdrop-blur-lg pointer-events-none opacity-0 translate-y-[-8px] transition-all duration-300"
+    class="mobile-nav md:hidden fixed inset-x-0 bottom-0 bg-white pointer-events-none opacity-0 translate-y-[-8px] transition-all duration-300 z-40 overflow-y-auto"
   >
     <ul class="container-prose flex flex-col gap-2 list-none m-0 p-0 pt-6">
       {nav.map((item, i) => {
@@ -107,6 +107,12 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 </script>
 
 <style>
+  /* Drawer fills the viewport below the header. The header sits z-50, drawer z-40. */
+  .mobile-nav {
+    top: var(--header-h, 57px);
+    background-color: #ffffff;
+  }
+
   /* Hamburger → X morph */
   #nav-toggle.is-open .hamburger-line:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
