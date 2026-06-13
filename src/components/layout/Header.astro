@@ -9,7 +9,7 @@ const nav = [
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
-<header class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-50">
+<header class="border-b border-slate-200 bg-white sticky top-0 z-50">
   <div class="container-prose flex items-center justify-between py-3 sm:py-4">
     <a href="/" class="font-bold text-lg sm:text-xl text-slate-900 no-underline">
       WP × Astro
@@ -41,99 +41,89 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
     <!-- Mobile hamburger -->
     <button
       id="nav-toggle"
-      class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-50"
+      class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
       aria-label="פתח תפריט"
       aria-expanded="false"
       aria-controls="mobile-nav"
     >
-      <span class="hamburger-line block w-6 h-0.5 bg-slate-900 rounded transition-all duration-300 origin-center"></span>
-      <span class="hamburger-line block w-6 h-0.5 bg-slate-900 rounded transition-all duration-300 origin-center"></span>
-      <span class="hamburger-line block w-6 h-0.5 bg-slate-900 rounded transition-all duration-300 origin-center"></span>
+      <span id="hb-1" class="block w-6 h-0.5 bg-slate-900 rounded transition-transform duration-300 origin-center"></span>
+      <span id="hb-2" class="block w-6 h-0.5 bg-slate-900 rounded transition-opacity duration-300"></span>
+      <span id="hb-3" class="block w-6 h-0.5 bg-slate-900 rounded transition-transform duration-300 origin-center"></span>
     </button>
   </div>
-
-  <!-- Mobile drawer -->
-  <nav
-    id="mobile-nav"
-    aria-label="ניווט נייד"
-    class="mobile-nav md:hidden fixed inset-x-0 bottom-0 bg-white pointer-events-none opacity-0 translate-y-[-8px] transition-all duration-300 z-40 overflow-y-auto"
-  >
-    <ul class="container-prose flex flex-col gap-2 list-none m-0 p-0 pt-6">
-      {nav.map((item, i) => {
-        const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-        return (
-          <li class="mobile-nav-item opacity-0 translate-y-2" style={`transition-delay: ${i * 40}ms`}>
-            <a
-              href={item.href}
-              class:list={[
-                "block py-4 px-2 text-xl font-medium no-underline border-b border-slate-100 transition-colors",
-                isActive ? "text-brand-700" : "text-slate-800 hover:text-brand-700",
-              ]}
-              aria-current={isActive ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-  </nav>
 </header>
+
+<!-- Mobile drawer (sibling of header, escapes the header's stacking context) -->
+<nav
+  id="mobile-nav"
+  aria-label="ניווט נייד"
+  aria-hidden="true"
+  class="md:hidden fixed inset-x-0 bottom-0 top-[57px] sm:top-[65px] bg-white z-40 overflow-y-auto invisible opacity-0 -translate-y-2 transition-all duration-300"
+>
+  <ul class="container-prose flex flex-col gap-0 list-none m-0 p-0 pt-6">
+    {nav.map((item, i) => {
+      const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+      return (
+        <li class="mobile-nav-item opacity-0 translate-y-3 transition-all duration-300" style={`transition-delay: ${i * 50}ms`}>
+          <a
+            href={item.href}
+            class:list={[
+              "block py-4 px-2 text-xl font-medium no-underline border-b border-slate-100 transition-colors",
+              isActive ? "text-brand-700" : "text-slate-800 hover:text-brand-700",
+            ]}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
 
 <script>
   const btn = document.getElementById("nav-toggle");
-  const nav = document.getElementById("mobile-nav");
-  if (btn && nav) {
-    btn.addEventListener("click", () => {
-      const isOpen = btn.getAttribute("aria-expanded") === "true";
-      const next = !isOpen;
-      btn.setAttribute("aria-expanded", String(next));
-      btn.setAttribute("aria-label", next ? "סגור תפריט" : "פתח תפריט");
-      btn.classList.toggle("is-open", next);
-      nav.classList.toggle("is-open", next);
-      document.body.style.overflow = next ? "hidden" : "";
+  const drawer = document.getElementById("mobile-nav");
+  const hb1 = document.getElementById("hb-1");
+  const hb2 = document.getElementById("hb-2");
+  const hb3 = document.getElementById("hb-3");
+
+  function setOpen(open: boolean) {
+    if (!btn || !drawer || !hb1 || !hb2 || !hb3) return;
+
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "סגור תפריט" : "פתח תפריט");
+    drawer.setAttribute("aria-hidden", String(!open));
+
+    // Drawer visibility + slide
+    drawer.classList.toggle("invisible", !open);
+    drawer.classList.toggle("opacity-0", !open);
+    drawer.classList.toggle("-translate-y-2", !open);
+    drawer.classList.toggle("opacity-100", open);
+    drawer.classList.toggle("translate-y-0", open);
+
+    // Stagger items
+    drawer.querySelectorAll<HTMLElement>(".mobile-nav-item").forEach((el) => {
+      el.classList.toggle("opacity-0", !open);
+      el.classList.toggle("translate-y-3", !open);
+      el.classList.toggle("opacity-100", open);
+      el.classList.toggle("translate-y-0", open);
     });
 
-    nav.addEventListener("click", (e) => {
-      if ((e.target as HTMLElement).tagName === "A") {
-        btn.setAttribute("aria-expanded", "false");
-        btn.setAttribute("aria-label", "פתח תפריט");
-        btn.classList.remove("is-open");
-        nav.classList.remove("is-open");
-        document.body.style.overflow = "";
-      }
+    // Hamburger → X
+    hb1.style.transform = open ? "translateY(8px) rotate(45deg)" : "";
+    hb2.style.opacity = open ? "0" : "";
+    hb3.style.transform = open ? "translateY(-8px) rotate(-45deg)" : "";
+
+    document.body.style.overflow = open ? "hidden" : "";
+  }
+
+  if (btn && drawer) {
+    btn.addEventListener("click", () => {
+      setOpen(btn.getAttribute("aria-expanded") !== "true");
+    });
+    drawer.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).tagName === "A") setOpen(false);
     });
   }
 </script>
-
-<style>
-  /* Drawer fills the viewport below the header. The header sits z-50, drawer z-40. */
-  .mobile-nav {
-    top: var(--header-h, 57px);
-    background-color: #ffffff;
-  }
-
-  /* Hamburger → X morph */
-  #nav-toggle.is-open .hamburger-line:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-  }
-  #nav-toggle.is-open .hamburger-line:nth-child(2) {
-    opacity: 0;
-    transform: scaleX(0);
-  }
-  #nav-toggle.is-open .hamburger-line:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-  }
-
-  /* Drawer slide-in */
-  .mobile-nav.is-open {
-    pointer-events: auto;
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .mobile-nav.is-open .mobile-nav-item {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-</style>
