@@ -1,0 +1,44 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import WpContent from "../components/WpContent.astro";
+import type { WpNode } from "../lib/wp";
+
+interface Props {
+  node: WpNode;
+}
+
+const { node } = Astro.props;
+const formattedDate = node.date
+  ? new Date(node.date).toLocaleDateString("he-IL", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : null;
+---
+
+<BaseLayout
+  title={node.seo?.title ?? node.title}
+  description={node.seo?.description ?? node.excerpt?.replace(/<[^>]+>/g, "")}
+  ogImage={node.seo?.ogImage ?? node.featuredImage?.url}
+>
+  <article class="container-prose py-10 sm:py-16">
+    <header class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
+      {formattedDate && (
+        <time class="block text-sm text-slate-500 mt-2" datetime={node.date}>
+          {formattedDate}
+        </time>
+      )}
+    </header>
+    {node.featuredImage?.url && (
+      <img
+        src={node.featuredImage.url}
+        alt={node.featuredImage.alt}
+        class="w-full rounded-2xl mb-8"
+        loading="lazy"
+      />
+    )}
+    <WpContent content={node.content} />
+  </article>
+</BaseLayout>

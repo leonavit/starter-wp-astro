@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="הדף לא נמצא | 404" description="הדף שחיפשתם אינו קיים.">
+  <section class="container-prose py-24 text-center">
+    <p class="text-sm font-medium text-brand-700 mb-3">שגיאה 404</p>
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+      הדף שחיפשתם לא נמצא
+    </h1>
+    <p class="text-lg text-slate-600 mb-8">
+      ייתכן שהקישור שגוי או שהדף הוסר. בואו נחזיר אתכם הביתה.
+    </p>
+    <a
+      href="/"
+      class="inline-block bg-brand-700 text-white font-medium px-6 py-3 rounded-lg no-underline hover:bg-brand-900 transition-colors"
+    >
+      חזרה לדף הבית
+    </a>
+  </section>
+</BaseLayout>

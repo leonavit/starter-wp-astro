@@ -1,0 +1,69 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import WpContent from "../components/WpContent.astro";
+import type { WpNode } from "../lib/wp";
+
+interface Props {
+  node: WpNode;
+}
+
+const { node } = Astro.props;
+---
+
+<BaseLayout
+  title={node.seo?.title ?? node.title}
+  description={node.seo?.description}
+>
+  <article class="container-prose py-10 sm:py-16">
+    <header class="mb-8 text-center">
+      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
+    </header>
+
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <WpContent content={node.content} />
+      </div>
+
+      <form
+        class="bg-slate-50 rounded-2xl p-6 sm:p-8 space-y-4"
+        method="post"
+        action="https://formspree.io/f/yourFormId"
+      >
+        <h2 class="text-xl font-semibold m-0">שלחו לנו הודעה</h2>
+        <label class="block">
+          <span class="text-sm font-medium text-slate-700">שם מלא</span>
+          <input
+            name="name"
+            required
+            type="text"
+            class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 focus:border-brand-500 focus:outline-none"
+          />
+        </label>
+        <label class="block">
+          <span class="text-sm font-medium text-slate-700">אימייל</span>
+          <input
+            name="email"
+            required
+            type="email"
+            class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 focus:border-brand-500 focus:outline-none"
+          />
+        </label>
+        <label class="block">
+          <span class="text-sm font-medium text-slate-700">הודעה</span>
+          <textarea
+            name="message"
+            required
+            rows="5"
+            class="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 focus:border-brand-500 focus:outline-none"
+          ></textarea>
+        </label>
+        <button
+          type="submit"
+          class="bg-brand-700 text-white font-medium px-6 py-3 rounded-lg hover:bg-brand-900 transition-colors"
+        >
+          שליחה
+        </button>
+      </form>
+    </div>
+  </article>
+</BaseLayout>

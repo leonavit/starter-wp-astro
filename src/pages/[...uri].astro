@@ -1,0 +1,44 @@
+---
+/**
+ * Master Router.
+ *
+ * Captures every URI from WordPress at build time and renders the right
+ * layout based on the node's `__typename` (and, for Pages, an optional
+ * Custom Template name). When the CMS is unreachable or returns nothing,
+ * seed content from `src/lib/wp.ts` keeps the site functional.
+ */
+import { getAllContent, type WpNode } from "../lib/wp";
+import PageLayout from "../layouts/PageLayout.astro";
+import HomeLayout from "../layouts/HomeLayout.astro";
+import ContactLayout from "../layouts/ContactLayout.astro";
+import PostLayout from "../layouts/PostLayout.astro";
+
+export async function getStaticPaths() {
+  const nodes = await getAllContent();
+
+  return nodes.map((node) => ({
+    // Astro maps `undefined` to the root index, so the homepage (uri "")
+    // becomes the literal `/` route.
+    params: { uri: node.uri === "" ? undefined : node.uri },
+    props: { node },
+  }));
+}
+
+interface Props {
+  node: WpNode;
+}
+
+const { node } = Astro.props;
+
+function pickLayout(n: WpNode) {
+  if (n.__typename === "Post") return PostLayout;
+  if (n.uri === "") return HomeLayout;
+  if (n.template === "HomeLayout") return HomeLayout;
+  if (n.template === "ContactLayout" || n.uri === "contact") return ContactLayout;
+  return PageLayout;
+}
+
+const Layout = pickLayout(node);
+---
+
+<Layout node={node} />

@@ -1,0 +1,31 @@
+---
+/**
+ * Standalone renderer for a Gutenberg `core/heading` block.
+ */
+interface Props {
+  text: string;
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  align?: "left" | "center" | "right";
+}
+
+const { text, level = 2, align = "right" } = Astro.props;
+
+const Tag = `h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+const sizeClass = {
+  1: "text-3xl sm:text-4xl",
+  2: "text-2xl sm:text-3xl",
+  3: "text-xl sm:text-2xl",
+  4: "text-lg sm:text-xl",
+  5: "text-base sm:text-lg",
+  6: "text-sm sm:text-base",
+}[level];
+
+const alignClass = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+}[align];
+---
+
+<Tag class:list={["font-bold text-slate-900 mt-8", sizeClass, alignClass]} set:html={text} />

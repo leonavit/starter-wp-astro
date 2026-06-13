@@ -1,0 +1,41 @@
+---
+/**
+ * Renders raw HTML from WordPress and applies light-touch transformations
+ * so common Gutenberg blocks pick up Tailwind styles defined in
+ * `src/styles/global.css` (`.wp-content` scope).
+ *
+ * We intentionally avoid a full HTML parser. Tailwind classes target
+ * Gutenberg's stable class names (`.wp-block-*`, `.has-text-align-*`)
+ * via the `wp-content` wrapper, and a small regex pass lazy-loads images
+ * for performance.
+ */
+
+interface Props {
+  content: string;
+}
+
+const { content } = Astro.props;
+
+function transform(html: string): string {
+  if (!html) return "";
+  let out = html;
+
+  // Lazy-load and async-decode all images that don't already opt out.
+  out = out.replace(/<img(?![^>]*\bloading=)([^>]*)>/g, '<img loading="lazy" decoding="async"$1>');
+
+  // Make external links open safely in a new tab.
+  out = out.replace(
+    /<a\s+([^>]*href="https?:\/\/[^"]+"[^>]*)>/g,
+    (match, attrs: string) => {
+      if (/target=/.test(attrs)) return match;
+      return `<a ${attrs} target="_blank" rel="noopener noreferrer">`;
+    },
+  );
+
+  return out;
+}
+
+const html = transform(content);
+---
+
+<div class="wp-content" set:html={html} />

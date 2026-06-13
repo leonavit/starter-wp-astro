@@ -1,0 +1,33 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import WpContent from "../components/WpContent.astro";
+import type { WpNode } from "../lib/wp";
+
+interface Props {
+  node: WpNode;
+}
+
+const { node } = Astro.props;
+---
+
+<BaseLayout
+  title={node.seo?.title ?? node.title}
+  description={node.seo?.description}
+  ogImage={node.seo?.ogImage ?? node.featuredImage?.url}
+>
+  <section class="bg-gradient-to-b from-brand-50 to-white">
+    <div class="container-prose py-16 sm:py-24 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+        {node.title}
+      </h1>
+      {node.seo?.description && (
+        <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
+          {node.seo.description}
+        </p>
+      )}
+    </div>
+  </section>
+  <article class="container-prose py-10 sm:py-16">
+    <WpContent content={node.content} />
+  </article>
+</BaseLayout>
