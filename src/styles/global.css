@@ -8,7 +8,6 @@
     scroll-behavior: smooth;
   }
 
-  /* Logical-property utility classes so RTL flips naturally. */
   body {
     text-rendering: optimizeLegibility;
   }
@@ -19,6 +18,14 @@
 
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+
+  /* Skip to content link — visible only when focused via keyboard. */
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus {
+    @apply not-sr-only fixed top-3 start-3 z-[100] bg-brand-700 text-white px-4 py-2 rounded-lg no-underline;
   }
 }
 
@@ -46,6 +53,9 @@
   }
   .wp-content p {
     @apply text-base sm:text-lg leading-7;
+  }
+  .wp-content p.lead {
+    @apply text-lg sm:text-xl text-slate-600 leading-relaxed;
   }
   .wp-content ul {
     @apply list-disc ps-6 space-y-2;

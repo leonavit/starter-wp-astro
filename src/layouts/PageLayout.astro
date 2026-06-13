@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import WpContent from "../components/WpContent.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 import type { WpNode } from "../lib/wp";
 
 interface Props {
@@ -15,7 +16,9 @@ const { node } = Astro.props;
   description={node.seo?.description}
   ogImage={node.seo?.ogImage ?? node.featuredImage?.url}
 >
-  <article class="container-prose py-8 sm:py-14">
+  <Breadcrumbs uri={node.uri} title={node.title} />
+
+  <article class="container-prose py-6 sm:py-10">
     <header class="mb-6 sm:mb-8">
       <h1 class="text-2xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
     </header>

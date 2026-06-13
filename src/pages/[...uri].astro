@@ -14,14 +14,21 @@ import ContactLayout from "../layouts/ContactLayout.astro";
 import PostLayout from "../layouts/PostLayout.astro";
 
 export async function getStaticPaths() {
+  // URIs owned by explicit page files. getStaticPaths is sandboxed
+  // from the rest of the module, so this lives inline.
+  const EXPLICIT_ROUTES = new Set(["blog"]);
+
+  const { getAllContent } = await import("../lib/wp");
   const nodes = await getAllContent();
 
-  return nodes.map((node) => ({
-    // Astro maps `undefined` to the root index, so the homepage (uri "")
-    // becomes the literal `/` route.
-    params: { uri: node.uri === "" ? undefined : node.uri },
-    props: { node },
-  }));
+  return nodes
+    .filter((n) => !EXPLICIT_ROUTES.has(n.uri))
+    .map((node) => ({
+      // Astro maps `undefined` to the root index, so the homepage (uri "")
+      // becomes the literal `/` route.
+      params: { uri: node.uri === "" ? undefined : node.uri },
+      props: { node },
+    }));
 }
 
 interface Props {

@@ -1,23 +1,20 @@
 ---
-const nav = [
-  { href: "/", label: "בית" },
-  { href: "/about", label: "אודות" },
-  { href: "/services", label: "שירותים" },
-  { href: "/contact", label: "צור קשר" },
-];
+import { siteConfig } from "../../config/site";
 
+const nav = siteConfig.nav;
+const { phone, phoneDisplay } = siteConfig.business;
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <header class="border-b border-slate-200 bg-white sticky top-0 z-50">
-  <div class="container-prose flex items-center justify-between py-3 sm:py-4">
-    <a href="/" class="font-bold text-lg sm:text-xl text-slate-900 no-underline">
-      WP × Astro
+  <div class="container-prose flex items-center justify-between gap-3 py-3 sm:py-4">
+    <a href="/" class="font-bold text-lg sm:text-xl text-slate-900 no-underline shrink-0">
+      {siteConfig.name}
     </a>
 
     <!-- Desktop nav -->
     <nav aria-label="ניווט ראשי" class="hidden md:block">
-      <ul class="flex items-center gap-6 list-none m-0 p-0">
+      <ul class="flex items-center gap-5 lg:gap-7 list-none m-0 p-0">
         {nav.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           return (
@@ -38,18 +35,42 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
       </ul>
     </nav>
 
-    <!-- Mobile hamburger -->
-    <button
-      id="nav-toggle"
-      class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-      aria-label="פתח תפריט"
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-    >
-      <span id="hb-1" class="block w-6 h-0.5 bg-slate-900 rounded transition-transform duration-300 origin-center"></span>
-      <span id="hb-2" class="block w-6 h-0.5 bg-slate-900 rounded transition-opacity duration-300"></span>
-      <span id="hb-3" class="block w-6 h-0.5 bg-slate-900 rounded transition-transform duration-300 origin-center"></span>
-    </button>
+    <div class="flex items-center gap-2">
+      <!-- Desktop phone CTA -->
+      <a
+        href={`tel:${phone}`}
+        class="hidden md:inline-flex items-center gap-2 bg-brand-700 hover:bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium no-underline transition-colors"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.41.6 3.69.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1h3.46a1 1 0 0 1 1 1c0 1.27.21 2.53.6 3.69a1 1 0 0 1-.25 1.05l-2.19 2.05z"/>
+        </svg>
+        <span dir="ltr">{phoneDisplay}</span>
+      </a>
+
+      <!-- Mobile phone (icon only) -->
+      <a
+        href={`tel:${phone}`}
+        aria-label={`התקשרו ל-${phoneDisplay}`}
+        class="md:hidden w-10 h-10 rounded-lg bg-brand-700 text-white flex items-center justify-center no-underline"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.41.6 3.69.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1h3.46a1 1 0 0 1 1 1c0 1.27.21 2.53.6 3.69a1 1 0 0 1-.25 1.05l-2.19 2.05z"/>
+        </svg>
+      </a>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="nav-toggle"
+        class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+        aria-label="פתח תפריט"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <span id="hb-1" class="block w-6 h-0.5 bg-slate-900 rounded transition-transform duration-300 origin-center"></span>
+        <span id="hb-2" class="block w-6 h-0.5 bg-slate-900 rounded transition-opacity duration-300"></span>
+        <span id="hb-3" class="block w-6 h-0.5 bg-slate-900 rounded transition-transform duration-300 origin-center"></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -95,14 +116,12 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
     btn.setAttribute("aria-label", open ? "סגור תפריט" : "פתח תפריט");
     drawer.setAttribute("aria-hidden", String(!open));
 
-    // Drawer visibility + slide
     drawer.classList.toggle("invisible", !open);
     drawer.classList.toggle("opacity-0", !open);
     drawer.classList.toggle("-translate-y-2", !open);
     drawer.classList.toggle("opacity-100", open);
     drawer.classList.toggle("translate-y-0", open);
 
-    // Stagger items
     drawer.querySelectorAll<HTMLElement>(".mobile-nav-item").forEach((el) => {
       el.classList.toggle("opacity-0", !open);
       el.classList.toggle("translate-y-3", !open);
@@ -110,7 +129,6 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
       el.classList.toggle("translate-y-0", open);
     });
 
-    // Hamburger → X
     hb1.style.transform = open ? "translateY(8px) rotate(45deg)" : "";
     hb2.style.opacity = open ? "0" : "";
     hb3.style.transform = open ? "translateY(-8px) rotate(-45deg)" : "";

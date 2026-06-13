@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import WpContent from "../components/WpContent.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
 import type { WpNode } from "../lib/wp";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const { node } = Astro.props;
+
 const formattedDate = node.date
   ? new Date(node.date).toLocaleDateString("he-IL", {
       year: "numeric",
@@ -15,6 +17,9 @@ const formattedDate = node.date
       day: "numeric",
     })
   : null;
+
+const wordCount = node.content.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.round(wordCount / 220));
 ---
 
 <BaseLayout
@@ -22,14 +27,22 @@ const formattedDate = node.date
   description={node.seo?.description ?? node.excerpt?.replace(/<[^>]+>/g, "")}
   ogImage={node.seo?.ogImage ?? node.featuredImage?.url}
 >
-  <article class="container-prose py-10 sm:py-16">
-    <header class="mb-8">
-      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
-      {formattedDate && (
-        <time class="block text-sm text-slate-500 mt-2" datetime={node.date}>
-          {formattedDate}
-        </time>
-      )}
+  <Breadcrumbs
+    items={[
+      { label: "בית", href: "/" },
+      { label: "בלוג", href: "/blog" },
+      { label: node.title },
+    ]}
+  />
+
+  <article class="container-prose py-6 sm:py-10">
+    <header class="mb-6 sm:mb-8">
+      <h1 class="text-2xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
+      <div class="mt-3 flex flex-wrap gap-3 text-sm text-slate-500">
+        {formattedDate && <time datetime={node.date}>{formattedDate}</time>}
+        <span aria-hidden="true">•</span>
+        <span>{readingMinutes} דק׳ קריאה</span>
+      </div>
     </header>
     {node.featuredImage?.url && (
       <img
@@ -40,5 +53,11 @@ const formattedDate = node.date
       />
     )}
     <WpContent content={node.content} />
+
+    <footer class="mt-10 pt-6 border-t border-slate-200">
+      <a href="/blog" class="text-brand-700 font-medium no-underline hover:text-brand-900">
+        → חזרה לרשימת הפוסטים
+      </a>
+    </footer>
   </article>
 </BaseLayout>

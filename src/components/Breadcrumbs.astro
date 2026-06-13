@@ -1,0 +1,68 @@
+---
+/**
+ * Breadcrumbs with auto-emitted BreadcrumbList JSON-LD for SEO.
+ * Pass either explicit `items` or a `uri` (e.g. "services/web") and
+ * a `title` and the trail is generated from the URI segments.
+ */
+import { siteConfig } from "../config/site";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items?: Crumb[];
+  uri?: string;
+  title?: string;
+}
+
+const { items, uri, title } = Astro.props;
+
+function buildFromUri(u: string, t: string): Crumb[] {
+  const segments = u.split("/").filter(Boolean);
+  const trail: Crumb[] = [{ label: "בית", href: "/" }];
+  let acc = "";
+  segments.forEach((seg, i) => {
+    acc += "/" + seg;
+    const isLast = i === segments.length - 1;
+    trail.push({
+      label: isLast ? t : seg.replace(/-/g, " "),
+      href: isLast ? undefined : acc,
+    });
+  });
+  return trail;
+}
+
+const trail: Crumb[] = items ?? buildFromUri(uri ?? "", title ?? "");
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: trail.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.label,
+    ...(c.href ? { item: new URL(c.href, siteConfig.url).toString() } : {}),
+  })),
+};
+---
+
+{trail.length > 1 && (
+  <nav aria-label="פירורי לחם" class="container-prose pt-4 sm:pt-6">
+    <ol class="flex flex-wrap items-center gap-1 text-sm text-slate-500 list-none m-0 p-0">
+      {trail.map((c, i) => (
+        <li class="flex items-center gap-1">
+          {c.href ? (
+            <a href={c.href} class="hover:text-brand-700 no-underline">{c.label}</a>
+          ) : (
+            <span class="text-slate-700 font-medium" aria-current="page">{c.label}</span>
+          )}
+          {i < trail.length - 1 && <span aria-hidden="true" class="text-slate-300">/</span>}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

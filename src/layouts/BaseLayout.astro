@@ -2,6 +2,8 @@
 import "../styles/global.css";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
+import WhatsAppButton from "../components/WhatsAppButton.astro";
+import { siteConfig } from "../config/site";
 
 interface Props {
   title: string;
@@ -9,20 +11,50 @@ interface Props {
   ogImage?: string;
   lang?: string;
   dir?: "rtl" | "ltr";
+  noindex?: boolean;
 }
 
 const {
   title,
-  description = "אתר מבוסס Astro + WordPress",
+  description = siteConfig.description,
   ogImage,
   lang = "he",
   dir = "rtl",
+  noindex = false,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://example.com");
+const siteUrl = Astro.site ?? new URL(siteConfig.url);
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 const resolvedOg = ogImage
-  ? new URL(ogImage, Astro.site ?? "https://example.com").toString()
-  : undefined;
+  ? new URL(ogImage, siteUrl).toString()
+  : new URL("/og-default.png", siteUrl).toString();
+
+const { business, social, analytics } = siteConfig;
+
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: business.legalName,
+  url: siteConfig.url,
+  telephone: business.phone,
+  email: business.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: business.address.street,
+    addressLocality: business.address.city,
+    postalCode: business.address.zip,
+    addressCountry: business.address.country,
+  },
+  sameAs: Object.values(social).filter(Boolean),
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.name,
+  url: siteConfig.url,
+  inLanguage: lang,
+};
 ---
 
 <!doctype html>
@@ -31,38 +63,57 @@ const resolvedOg = ogImage
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content={siteConfig.themeColor} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL.toString()} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:locale" content={siteConfig.locale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL.toString()} />
-    {resolvedOg && <meta property="og:image" content={resolvedOg} />}
+    <meta property="og:image" content={resolvedOg} />
 
-    <meta name="twitter:card" content={resolvedOg ? "summary_large_image" : "summary"} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {resolvedOg && <meta name="twitter:image" content={resolvedOg} />}
+    <meta name="twitter:image" content={resolvedOg} />
 
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
+
+    <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
+
+    {analytics.ga4 && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${analytics.ga4}`}></script>
+        <script set:html={`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${analytics.ga4}');
+        `} />
+      </>
+    )}
   </head>
   <body class="min-h-screen flex flex-col bg-white text-slate-800 antialiased">
+    <a href="#main-content" class="skip-link">דלגו לתוכן הראשי</a>
     <Header />
-    <main class="flex-1">
+    <main id="main-content" class="flex-1" tabindex="-1">
       <slot />
     </main>
     <Footer />
+    <WhatsAppButton />
   </body>
 </html>
