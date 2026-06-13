@@ -10,12 +10,14 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <header class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-50">
-  <div class="container-prose flex items-center justify-between py-4">
-    <a href="/" class="font-bold text-xl text-slate-900 no-underline">
+  <div class="container-prose flex items-center justify-between py-3 sm:py-4">
+    <a href="/" class="font-bold text-lg sm:text-xl text-slate-900 no-underline">
       WP × Astro
     </a>
-    <nav aria-label="ניווט ראשי">
-      <ul class="flex items-center gap-4 sm:gap-6 list-none m-0 p-0">
+
+    <!-- Desktop nav -->
+    <nav aria-label="ניווט ראשי" class="hidden md:block">
+      <ul class="flex items-center gap-6 list-none m-0 p-0">
         {nav.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           return (
@@ -23,7 +25,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
               <a
                 href={item.href}
                 class:list={[
-                  "no-underline text-sm sm:text-base font-medium",
+                  "no-underline text-base font-medium transition-colors",
                   isActive ? "text-brand-700" : "text-slate-700 hover:text-brand-700",
                 ]}
                 aria-current={isActive ? "page" : undefined}
@@ -35,5 +37,97 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
         })}
       </ul>
     </nav>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="nav-toggle"
+      class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-50"
+      aria-label="פתח תפריט"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+    >
+      <span class="hamburger-line block w-6 h-0.5 bg-slate-900 rounded transition-all duration-300 origin-center"></span>
+      <span class="hamburger-line block w-6 h-0.5 bg-slate-900 rounded transition-all duration-300 origin-center"></span>
+      <span class="hamburger-line block w-6 h-0.5 bg-slate-900 rounded transition-all duration-300 origin-center"></span>
+    </button>
   </div>
+
+  <!-- Mobile drawer -->
+  <nav
+    id="mobile-nav"
+    aria-label="ניווט נייד"
+    class="mobile-nav md:hidden fixed inset-0 top-[57px] bg-white/95 backdrop-blur-lg pointer-events-none opacity-0 translate-y-[-8px] transition-all duration-300"
+  >
+    <ul class="container-prose flex flex-col gap-2 list-none m-0 p-0 pt-6">
+      {nav.map((item, i) => {
+        const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+        return (
+          <li class="mobile-nav-item opacity-0 translate-y-2" style={`transition-delay: ${i * 40}ms`}>
+            <a
+              href={item.href}
+              class:list={[
+                "block py-4 px-2 text-xl font-medium no-underline border-b border-slate-100 transition-colors",
+                isActive ? "text-brand-700" : "text-slate-800 hover:text-brand-700",
+              ]}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
 </header>
+
+<script>
+  const btn = document.getElementById("nav-toggle");
+  const nav = document.getElementById("mobile-nav");
+  if (btn && nav) {
+    btn.addEventListener("click", () => {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      const next = !isOpen;
+      btn.setAttribute("aria-expanded", String(next));
+      btn.setAttribute("aria-label", next ? "סגור תפריט" : "פתח תפריט");
+      btn.classList.toggle("is-open", next);
+      nav.classList.toggle("is-open", next);
+      document.body.style.overflow = next ? "hidden" : "";
+    });
+
+    nav.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).tagName === "A") {
+        btn.setAttribute("aria-expanded", "false");
+        btn.setAttribute("aria-label", "פתח תפריט");
+        btn.classList.remove("is-open");
+        nav.classList.remove("is-open");
+        document.body.style.overflow = "";
+      }
+    });
+  }
+</script>
+
+<style>
+  /* Hamburger → X morph */
+  #nav-toggle.is-open .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  #nav-toggle.is-open .hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  #nav-toggle.is-open .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* Drawer slide-in */
+  .mobile-nav.is-open {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .mobile-nav.is-open .mobile-nav-item {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+</style>

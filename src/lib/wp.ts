@@ -188,17 +188,85 @@ export const SEED_CONTENT: WpNode[] = [
     template: "HomeLayout",
     content: `
       <section class="wp-block-cover has-text-align-center">
-        <h1>בונים אתרים מהירים עם Astro + WordPress</h1>
-        <p>ערכת התחלה מוכנה לייצור עבור אתרי תוכן בעברית — מהירים, נגישים ומותאמים לסלולר.</p>
-        <p><a class="wp-block-button__link" href="/contact">צרו קשר</a></p>
+        <p class="eyebrow">Astro × WordPress Starter</p>
+        <h1>בונים אתרים מהירים שלקוחות אוהבים</h1>
+        <p class="lead">ערכת התחלה מוכנה לייצור לאתרי תוכן בעברית — מהירים, נגישים, מותאמים לכל מסך, ומחוברים ל-WordPress כ-Headless CMS.</p>
+        <p class="button-row">
+          <a class="wp-block-button__link" href="/contact">בואו נדבר</a>
+          <a class="wp-block-button__link is-outline" href="/services">צפו בשירותים</a>
+        </p>
       </section>
-      <section>
-        <h2 class="has-text-align-center">למה לבחור בנו?</h2>
-        <ul>
-          <li>ביצועים מצוינים בזכות יצירה סטטית של דפים.</li>
-          <li>תוכן שמתעדכן ישירות מתוך WordPress דרך WPGraphQL.</li>
-          <li>תמיכה מלאה ב-RTL ובעברית מהרגע הראשון.</li>
-        </ul>
+
+      <section class="wp-block-stats">
+        <div class="wp-block-stat">
+          <strong>100/100</strong>
+          <span>ציון Lighthouse</span>
+        </div>
+        <div class="wp-block-stat">
+          <strong>&lt; 1s</strong>
+          <span>טעינה ראשונה</span>
+        </div>
+        <div class="wp-block-stat">
+          <strong>0kb</strong>
+          <span>JavaScript כברירת מחדל</span>
+        </div>
+        <div class="wp-block-stat">
+          <strong>RTL</strong>
+          <span>תמיכה מלאה</span>
+        </div>
+      </section>
+
+      <section class="wp-block-features">
+        <h2 class="has-text-align-center">למה זה עובד?</h2>
+        <p class="has-text-align-center lead">שלושה עקרונות שמרכיבים אתר מהיר באמת.</p>
+        <div class="wp-block-columns has-3-columns">
+          <div class="wp-block-column wp-block-feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Static-First</h3>
+            <p>כל דף נבנה מראש כ-HTML טהור. שרת? לא חייב. CDN פשוט מגיש את הקובץ — והדפדפן מציג מיד.</p>
+          </div>
+          <div class="wp-block-column wp-block-feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>WordPress כ-CMS</h3>
+            <p>הלקוח ממשיך לערוך ב-WP-Admin שהוא מכיר. אתה מקבל את התוכן דרך WPGraphQL — נקי, מהיר, ובמבנה שאתה שולט בו.</p>
+          </div>
+          <div class="wp-block-column wp-block-feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>אפס משטח תקיפה</h3>
+            <p>WordPress יושב פרטי, רק ה-build מדבר איתו. הקהל רואה רק קבצים סטטיים — אין PHP, אין DB, אין WP-Login חשוף.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="wp-block-process">
+        <h2 class="has-text-align-center">איך מתחילים?</h2>
+        <ol class="process-steps">
+          <li>
+            <strong>Clone & Install</strong>
+            <p>שכפלו את הריפוזיטורי, הריצו <code>npm install</code> ותראו אתר עובד תוך שניות.</p>
+          </li>
+          <li>
+            <strong>חברו WordPress</strong>
+            <p>הגדירו <code>WP_GRAPHQL_URL</code> בקובץ ה-<code>.env</code>. כל דף ופוסט שלכם יהפוך לעמוד סטטי בבילד הבא.</p>
+          </li>
+          <li>
+            <strong>Deploy</strong>
+            <p>העלו ל-Vercel, Netlify, Cloudflare Pages או כל CDN. בלי שרת, בלי תחזוקה.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="wp-block-testimonial">
+        <blockquote>
+          <p>"זה בדיוק המבנה שחיפשנו: לקוחות שלנו ממשיכים לעבוד ב-WordPress, ואנחנו מקבלים אתר שעובר Lighthouse בלי לזיע."</p>
+          <cite>— מפתח Frontend, סוכנות דיגיטל בתל אביב</cite>
+        </blockquote>
+      </section>
+
+      <section class="wp-block-cta">
+        <h2>מוכנים להתחיל?</h2>
+        <p>קבלו אתר חדש שמרגיש מהיר — ומשאיר את עורך התוכן רגוע.</p>
+        <p><a class="wp-block-button__link" href="/contact">דברו איתנו</a></p>
       </section>
     `,
     seo: {

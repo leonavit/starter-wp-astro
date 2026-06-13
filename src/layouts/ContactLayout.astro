@@ -14,18 +14,18 @@ const { node } = Astro.props;
   title={node.seo?.title ?? node.title}
   description={node.seo?.description}
 >
-  <article class="container-prose py-10 sm:py-16">
-    <header class="mb-8 text-center">
-      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
+  <article class="container-prose py-8 sm:py-14">
+    <header class="mb-6 sm:mb-10 text-center">
+      <h1 class="text-2xl sm:text-4xl font-bold text-slate-900">{node.title}</h1>
     </header>
 
-    <div class="grid gap-10 lg:grid-cols-2">
+    <div class="grid gap-6 sm:gap-10 lg:grid-cols-2">
       <div>
         <WpContent content={node.content} />
       </div>
 
       <form
-        class="bg-slate-50 rounded-2xl p-6 sm:p-8 space-y-4"
+        class="bg-slate-50 rounded-2xl p-5 sm:p-8 space-y-4"
         method="post"
         action="https://formspree.io/f/yourFormId"
       >

@@ -15,19 +15,7 @@ const { node } = Astro.props;
   description={node.seo?.description}
   ogImage={node.seo?.ogImage ?? node.featuredImage?.url}
 >
-  <section class="bg-gradient-to-b from-brand-50 to-white">
-    <div class="container-prose py-16 sm:py-24 text-center">
-      <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
-        {node.title}
-      </h1>
-      {node.seo?.description && (
-        <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto">
-          {node.seo.description}
-        </p>
-      )}
-    </div>
-  </section>
-  <article class="container-prose py-10 sm:py-16">
+  <article class="container-prose py-6 sm:py-12">
     <WpContent content={node.content} />
   </article>
 </BaseLayout>
