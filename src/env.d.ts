@@ -4,6 +4,7 @@
 interface ImportMetaEnv {
   readonly WP_GRAPHQL_URL?: string;
   readonly WP_GRAPHQL_TOKEN?: string;
+  readonly WP_REST_URL?: string;
   readonly SITE_URL?: string;
 }
 

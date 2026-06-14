@@ -1,0 +1,195 @@
+/**
+ * WP × Astro Starter — Theme Options admin styling.
+ *
+ * Plain CSS so the theme stays plugin-free and dependency-free.
+ */
+
+.wpas-wrap {
+	max-width: 1100px;
+	margin: 24px auto 64px;
+	direction: rtl;
+}
+
+.wpas-header__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 24px;
+	margin: 0 0 4px;
+}
+
+.wpas-header__lead {
+	margin: 0 0 20px;
+	color: #4b5563;
+}
+
+.wpas-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	border-bottom: 1px solid #e5e7eb;
+	margin-bottom: 24px;
+}
+
+.wpas-tabs__link {
+	padding: 10px 16px;
+	border: 1px solid transparent;
+	border-bottom: none;
+	background: transparent;
+	color: #475569;
+	text-decoration: none;
+	border-radius: 8px 8px 0 0;
+	font-weight: 500;
+}
+
+.wpas-tabs__link:hover {
+	color: #1d4ed8;
+	background: #f8fafc;
+}
+
+.wpas-tabs__link.is-active {
+	background: #ffffff;
+	border-color: #e5e7eb;
+	color: #1d4ed8;
+	margin-bottom: -1px;
+}
+
+.wpas-card {
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	margin-bottom: 24px;
+	overflow: hidden;
+}
+
+.wpas-card__header {
+	padding: 18px 24px;
+	border-bottom: 1px solid #f1f5f9;
+	background: #f8fafc;
+}
+
+.wpas-card__title {
+	margin: 0;
+	font-size: 18px;
+	color: #0f172a;
+}
+
+.wpas-card__description {
+	margin: 4px 0 0;
+	color: #64748b;
+	font-size: 13px;
+}
+
+.wpas-card__body {
+	padding: 24px;
+}
+
+.wpas-grid {
+	display: grid;
+	gap: 16px;
+}
+
+.wpas-grid--2 {
+	grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+	.wpas-grid--2 {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.wpas-field {
+	margin-bottom: 16px;
+}
+
+.wpas-field__label {
+	display: block;
+	font-weight: 600;
+	color: #0f172a;
+	margin-bottom: 6px;
+	font-size: 13px;
+}
+
+.wpas-field__input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	font-size: 14px;
+	box-shadow: none;
+}
+
+.wpas-field__input:focus {
+	border-color: #1d4ed8;
+	box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+	outline: none;
+}
+
+.wpas-field__input--textarea {
+	resize: vertical;
+}
+
+.wpas-field__help {
+	margin: 4px 0 0;
+	font-size: 12px;
+	color: #64748b;
+}
+
+.wpas-subheading {
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: #475569;
+	margin: 24px 0 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.wpas-actions {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #e5e7eb;
+}
+
+/* Hours repeater */
+.wpas-hours__row {
+	display: grid;
+	grid-template-columns: 1fr 1fr auto;
+	gap: 8px;
+	margin-bottom: 8px;
+	align-items: start;
+}
+
+/* Media field */
+.wpas-media__thumb {
+	margin-bottom: 8px;
+	padding: 8px;
+	background: #f8fafc;
+	border: 1px dashed #cbd5e1;
+	border-radius: 8px;
+	display: inline-block;
+}
+
+.wpas-media__thumb[hidden] {
+	display: none;
+}
+
+.wpas-media__thumb img {
+	max-width: 180px;
+	height: auto;
+	display: block;
+}
+
+.wpas-media__controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.wpas-media__controls .wpas-field__input {
+	flex: 1;
+	min-width: 220px;
+}

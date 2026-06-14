@@ -4,6 +4,7 @@ import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 import WhatsAppButton from "../components/WhatsAppButton.astro";
 import { siteConfig } from "../config/site";
+import { getThemeOptions } from "../lib/wp-options";
 
 interface Props {
   title: string;
@@ -14,9 +15,12 @@ interface Props {
   noindex?: boolean;
 }
 
+const options = await getThemeOptions();
+const { general, contact, social, seo } = options;
+
 const {
   title,
-  description = siteConfig.description,
+  description = general.description,
   ogImage,
   lang = "he",
   dir = "rtl",
@@ -25,33 +29,33 @@ const {
 
 const siteUrl = Astro.site ?? new URL(siteConfig.url);
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+const fallbackOg = general.ogImageUrl || "/og-default.png";
 const resolvedOg = ogImage
   ? new URL(ogImage, siteUrl).toString()
-  : new URL("/og-default.png", siteUrl).toString();
-
-const { business, social, analytics } = siteConfig;
+  : new URL(fallbackOg, siteUrl).toString();
 
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: business.legalName,
+  name: general.legalName,
   url: siteConfig.url,
-  telephone: business.phone,
-  email: business.email,
+  telephone: contact.phone,
+  email: contact.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: business.address.street,
-    addressLocality: business.address.city,
-    postalCode: business.address.zip,
-    addressCountry: business.address.country,
+    streetAddress: contact.addressStreet,
+    addressLocality: contact.addressCity,
+    postalCode: contact.addressZip,
+    addressCountry: contact.addressCountry,
   },
   sameAs: Object.values(social).filter(Boolean),
+  ...(general.logoUrl && { logo: general.logoUrl }),
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: siteConfig.name,
+  name: general.name,
   url: siteConfig.url,
   inLanguage: lang,
 };
@@ -63,9 +67,10 @@ const websiteJsonLd = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content={siteConfig.themeColor} />
+    <meta name="theme-color" content={general.themeColor} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
+    {seo.verificationGoogle && <meta name="google-site-verification" content={seo.verificationGoogle} />}
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -73,7 +78,7 @@ const websiteJsonLd = {
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:site_name" content={general.name} />
     <meta property="og:locale" content={siteConfig.locale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -95,20 +100,36 @@ const websiteJsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
     <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
 
-    {analytics.ga4 && (
+    {seo.gtmId && (
+      <script set:html={`
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${seo.gtmId}');
+      `} />
+    )}
+
+    {seo.ga4Id && !seo.gtmId && (
       <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${analytics.ga4}`}></script>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${seo.ga4Id}`}></script>
         <script set:html={`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${analytics.ga4}');
+          gtag('config', '${seo.ga4Id}');
         `} />
       </>
+    )}
+
+    {seo.facebookPixel && (
+      <script set:html={`
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init','${seo.facebookPixel}');fbq('track','PageView');
+      `} />
     )}
   </head>
   <body class="min-h-screen flex flex-col bg-white text-slate-800 antialiased">
     <a href="#main-content" class="skip-link">דלגו לתוכן הראשי</a>
+    {seo.gtmId && (
+      <noscript set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${seo.gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`} />
+    )}
     <Header />
     <main id="main-content" class="flex-1" tabindex="-1">
       <slot />

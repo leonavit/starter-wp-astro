@@ -1,15 +1,24 @@
 ---
 import { siteConfig } from "../../config/site";
+import { getThemeOptions } from "../../lib/wp-options";
 
+const options = await getThemeOptions();
 const nav = siteConfig.nav;
-const { phone, phoneDisplay } = siteConfig.business;
+const { phone, phoneDisplay } = options.contact;
+const brandName = options.general.name;
+const logoUrl = options.general.logoUrl;
+
 const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <header class="border-b border-slate-200 bg-white sticky top-0 z-50">
   <div class="container-prose flex items-center justify-between gap-3 py-3 sm:py-4">
-    <a href="/" class="font-bold text-lg sm:text-xl text-slate-900 no-underline shrink-0">
-      {siteConfig.name}
+    <a href="/" class="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 no-underline shrink-0">
+      {logoUrl ? (
+        <img src={logoUrl} alt={brandName} class="h-8 sm:h-10 w-auto" />
+      ) : (
+        <span>{brandName}</span>
+      )}
     </a>
 
     <!-- Desktop nav -->
@@ -36,29 +45,30 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
     </nav>
 
     <div class="flex items-center gap-2">
-      <!-- Desktop phone CTA -->
-      <a
-        href={`tel:${phone}`}
-        class="hidden md:inline-flex items-center gap-2 bg-brand-700 hover:bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium no-underline transition-colors"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.41.6 3.69.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1h3.46a1 1 0 0 1 1 1c0 1.27.21 2.53.6 3.69a1 1 0 0 1-.25 1.05l-2.19 2.05z"/>
-        </svg>
-        <span dir="ltr">{phoneDisplay}</span>
-      </a>
+      {phone && (
+        <>
+          <a
+            href={`tel:${phone}`}
+            class="hidden md:inline-flex items-center gap-2 bg-brand-700 hover:bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium no-underline transition-colors"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.41.6 3.69.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1h3.46a1 1 0 0 1 1 1c0 1.27.21 2.53.6 3.69a1 1 0 0 1-.25 1.05l-2.19 2.05z"/>
+            </svg>
+            <span dir="ltr">{phoneDisplay}</span>
+          </a>
 
-      <!-- Mobile phone (icon only) -->
-      <a
-        href={`tel:${phone}`}
-        aria-label={`התקשרו ל-${phoneDisplay}`}
-        class="md:hidden w-10 h-10 rounded-lg bg-brand-700 text-white flex items-center justify-center no-underline"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.41.6 3.69.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1h3.46a1 1 0 0 1 1 1c0 1.27.21 2.53.6 3.69a1 1 0 0 1-.25 1.05l-2.19 2.05z"/>
-        </svg>
-      </a>
+          <a
+            href={`tel:${phone}`}
+            aria-label={`התקשרו ל-${phoneDisplay}`}
+            class="md:hidden w-10 h-10 rounded-lg bg-brand-700 text-white flex items-center justify-center no-underline"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.41.6 3.69.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1h3.46a1 1 0 0 1 1 1c0 1.27.21 2.53.6 3.69a1 1 0 0 1-.25 1.05l-2.19 2.05z"/>
+            </svg>
+          </a>
+        </>
+      )}
 
-      <!-- Mobile hamburger -->
       <button
         id="nav-toggle"
         class="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
@@ -74,7 +84,6 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
   </div>
 </header>
 
-<!-- Mobile drawer (sibling of header, escapes the header's stacking context) -->
 <nav
   id="mobile-nav"
   aria-label="ניווט נייד"

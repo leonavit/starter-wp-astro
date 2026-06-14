@@ -1,0 +1,11 @@
+/*
+Theme Name: WP × Astro Starter
+Theme URI: https://github.com/leonavit/starter-wp-astro
+Author: Leon Avitan
+Description: Minimal WordPress theme that powers the headless WP × Astro starter. Provides a Theme Options admin page and a REST endpoint consumed by the Astro frontend at build time. WordPress Core only — no plugins required.
+Version: 0.1.0
+Requires at least: 6.4
+Requires PHP: 8.0
+License: MIT
+Text Domain: wpas
+*/
